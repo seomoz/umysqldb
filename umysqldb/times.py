@@ -20,11 +20,15 @@ def encode_time(obj):
     return s
 
 def Date_or_None(s):
+    if isinstance(s, date):
+        return s
     try: return date(*[ int(x) for x in s.split('-',2)])
     except: return None
 
 
 def DateTime_or_None(s):
+    if isinstance(s, datetime):
+        return s
     if ' ' in s:
         sep = ' '
     elif 'T' in s:
@@ -39,6 +43,8 @@ def DateTime_or_None(s):
         return Date_or_None(s)
 
 def TimeDelta_or_None(s):
+    if isinstance(s, timedelta):
+        return s
     try:
         h, m, s = s.split(':')
         h, m, s = int(h), int(m), float(s)
@@ -55,6 +61,8 @@ def TimeDelta_or_None(s):
 def mysql_timestamp_converter(s):
     """Convert a MySQL TIMESTAMP to a Timestamp object."""
     # MySQL>4.1 returns TIMESTAMP in the same format as DATETIME
+    if isinstance(s, Timestamp):
+        return s
     if s[4] == '-': return DateTime_or_None(s)
     s += "0"*(14-len(s))
     parts = [int(x) for x in (s[:4],s[4:6],s[6:8],s[8:10],s[10:12],s[12:14])
