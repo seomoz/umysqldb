@@ -62,10 +62,15 @@ class Connection(pymysql.connections.Connection):
     def __init__(self, *args, **kwargs):
         if 'cursorclass' not in kwargs:
             kwargs['cursorclass'] = Cursor
-        if 'conv' not in kwargs:
-            kwargs['conv'] = decoders
+        kwargs['conv'] = decoders
         if 'charset' not in kwargs:
             kwargs['charset'] = 'utf8'
+        if 'use_unicode' not in kwargs:
+            kwargs['use_unicode'] = False
+        if not kwargs['use_unicode']:
+            kwargs['conv'].update({FIELD_TYPE.VAR_STRING: str, FIELD_TYPE.STRING: str})
+        if 'conv' in kwargs:
+            kwargs['conv'].update(kwargs['conv'])
         self._umysql_conn = umysql.Connection()
         super(Connection, self).__init__(*args, **kwargs)
 
